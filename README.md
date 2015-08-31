@@ -196,6 +196,13 @@ var isValid = $("#mobile-number").intlTelInput("isValidNumber");
 ```
 Returns: `true`/`false`
 
+**isValidNumberForRegion** 
+Validate the current number for the selected region  
+```js
+var isValid = $("#mobile-number").intlTelInput("isValidNumberForRegion");
+```
+Returns: `true`/`false`
+
 **loadUtils**  
 _Note: this is only needed if you're lazy loading the plugin script itself (intlTelInput.js). If not then just use the `utilsScript` option._  
 Load the utils.js script (included in the lib directory) to enable formatting/validation etc. See [Utilities Script](#utilities-script) for more information.
