@@ -1244,6 +1244,16 @@ Plugin.prototype = {
     return false;
   },
 
+  // validate the input val - assumes the global function isValidNumberForRegion (from utilsScript)
+  isValidNumberForRegion: function() {
+    var val = $.trim(this.telInput.val()),
+      countryCode = (this.options.nationalMode) ? this.selectedCountryData.iso2 : "";
+    if (window.intlTelInputUtils) {
+      return intlTelInputUtils.isValidNumberForRegion(val, countryCode);
+    }
+    return false;
+  },
+
 
   // load the utils script
   loadUtils: function(path) {
