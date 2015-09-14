@@ -125,6 +125,21 @@ module.exports = function(grunt) {
           script: "hiddenInput.js"
         }
       }
+    },
+    countryMode: {
+      src: 'examples/template.html.ejs',
+      dest: 'examples/gen/country-mode.html',
+      variables: function() {
+        return {
+          time: time,
+          title: "Different countryMode",
+          desc: "Set countryMode to use intlTelInput in different ways",
+          stylesheet: '',
+          markup: grunt.file.read('examples/partials/countryMode.html'),
+          code: grunt.file.read('examples/js/countryMode.js'),
+          script: "countryMode.js"
+        }
+      }
     }
   };
 };

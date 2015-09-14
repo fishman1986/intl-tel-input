@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Example: Different countryMode</title>
+    <link rel="stylesheet" href="../css/prism.css">
+    <link rel="stylesheet" href="../../build/css/intlTelInput.css?1442221084085">
+    <link rel="stylesheet" href="../../build/css/demo.css?1442221084085">
+    
+
+    <!-- GOOGLE ANALYTICS -->
+    <script>
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26178728-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <!-- /GOOGLE ANALYTICS -->
+  </head>
+
+  <body>
+    <a href="/intl-tel-input.html">Back</a>
+    <h1>Example: Different countryMode</h1>
+    <p>Set countryMode to use intlTelInput in different ways</p>
+    
+    <h2>Markup</h2>
+    <pre><code class="language-markup">&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Full:&lt;/td&gt;
+        &lt;td&gt;
+            &lt;input name=&quot;phone&quot; id=&quot;phone-full&quot; type=&quot;tel&quot;&gt; &lt;br/&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Single:&lt;/td&gt;
+        &lt;td&gt;
+            &lt;input name=&quot;phone&quot; id=&quot;phone-single&quot; type=&quot;tel&quot;&gt; &lt;br/&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;None:&lt;/td&gt;
+        &lt;td&gt;
+            &lt;input name=&quot;phone&quot; id=&quot;phone-none&quot; type=&quot;tel&quot;&gt; &lt;br/&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+    <h2>Code</h2>
+    <pre><code class="language-javascript">var input1 = $(&quot;#phone-full&quot;),
+    input2 = $(&quot;#phone-single&quot;),
+    input3 = $(&quot;#phone-none&quot;);
+
+input1.intlTelInput({
+    utilsScript: &quot;../../lib/libphonenumber/build/utils.js&quot; // just for formatting/placeholders etc
+});
+input2.intlTelInput({
+    countryMode:&#39;single&#39;
+});
+input3.intlTelInput({
+    countryMode:&#39;none&#39;
+});
+
+</code></pre>
+
+    <h2>Result</h2>
+    <div id="result">
+      <table>
+    <tr>
+        <td>Full:</td>
+        <td>
+            <input name="phone" id="phone-full" type="tel"> <br/>
+        </td>
+    </tr>
+    <tr>
+        <td>Single:</td>
+        <td>
+            <input name="phone" id="phone-single" type="tel"> <br/>
+        </td>
+    </tr>
+    <tr>
+        <td>None:</td>
+        <td>
+            <input name="phone" id="phone-none" type="tel"> <br/>
+        </td>
+    </tr>
+</table>
+    </div>
+
+    <script src="../js/prism.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="../../build/js/intlTelInput.js?1442221084085"></script>
+    <script src="../js/countryMode.js?1442221084085"></script>
+  </body>
+</html>

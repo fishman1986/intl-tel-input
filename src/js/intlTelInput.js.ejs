@@ -10,6 +10,8 @@ var pluginName = "intlTelInput",
     autoHideDialCode: true,
     // add or remove input placeholder with an example number for the selected country
     autoPlaceholder: true,
+    //show or hide country flag, could be "full" (normal), "single" (no dropdown/arrow), or "none" (no selected country or dropdown - just a normal input)
+    countryMode: 'full',
     // default country
     defaultCountry: "",
     // geoIp lookup function
@@ -197,26 +199,30 @@ Plugin.prototype = {
 
     // containers (mostly for positioning)
     this.telInput.wrap($("<div>", {
-      "class": "intl-tel-input"
+      "class": "intl-tel-input " + this.options.countryMode
     }));
 
-    this.flagsContainer = $("<div>", {
-      "class": "flag-dropdown"
-    }).insertBefore(this.telInput);
+    if(this.options.countryMode !== 'none') {
+      this.flagsContainer = $("<div>", {
+        "class": "flag-dropdown"
+      }).insertBefore(this.telInput);
 
-    // currently selected flag (displayed to left of input)
-    var selectedFlag = $("<div>", {
-      // make element focusable and tab naviagable
-      "tabindex": "0",
-      "class": "selected-flag"
-    }).appendTo(this.flagsContainer);
-    this.selectedFlagInner = $("<div>", {
-      "class": "iti-flag"
-    }).appendTo(selectedFlag);
-    // CSS triangle
-    $("<div>", {
-      "class": "arrow"
-    }).appendTo(selectedFlag);
+      // currently selected flag (displayed to left of input)
+      var selectedFlag = $("<div>", {
+        // make element focusable and tab navigable
+        "tabindex": "0",
+        "class": "selected-flag"
+      }).appendTo(this.flagsContainer);
+      this.selectedFlagInner = $("<div>", {
+        "class": "iti-flag"
+      }).appendTo(selectedFlag);
+      // CSS triangle
+      if(this.options.countryMode === 'full') {
+          $("<div>", {
+            "class": "arrow"
+          }).appendTo(selectedFlag);
+      }
+    }
 
     // country list
     // mobile is just a native select element
@@ -285,7 +291,7 @@ Plugin.prototype = {
     // if there is a number, and it's valid, we can go ahead and set the flag, else fall back to default
     if (this._getDialCode(val)) {
       this._updateFlagFromNumber(val, true);
-    } else if (this.options.defaultCountry != "auto") {
+    } else if (this.options.countryMode !== 'none' && this.options.defaultCountry != "auto") {
       // check the defaultCountry option, else fall back to the first in the list
       if (this.options.defaultCountry) {
         this.options.defaultCountry = this._getCountryData(this.options.defaultCountry.toLowerCase(), false, false);
@@ -338,39 +344,43 @@ Plugin.prototype = {
       }
 
       // toggle country dropdown on click
-      var selectedFlag = this.selectedFlagInner.parent();
-      selectedFlag.on("click" + this.ns, function(e) {
-        // only intercept this event if we're opening the dropdown
-        // else let it bubble up to the top ("click-off-to-close" listener)
-        // we cannot just stopPropagation as it may be needed to close another instance
-        if (that.countryList.hasClass("hide") && !that.telInput.prop("disabled") && !that.telInput.prop("readonly")) {
-          that._showDropdown();
-        }
-      });
+      if(this.options.countryMode === 'full') {
+        var selectedFlag = this.selectedFlagInner.parent();
+        selectedFlag.on("click" + this.ns, function(e) {
+          // only intercept this event if we're opening the dropdown
+          // else let it bubble up to the top ("click-off-to-close" listener)
+          // we cannot just stopPropagation as it may be needed to close another instance
+          if (that.countryList.hasClass("hide") && !that.telInput.prop("disabled") && !that.telInput.prop("readonly")) {
+            that._showDropdown();
+          }
+        });
+      }
     }
 
-    // open dropdown list if currently focused
-    this.flagsContainer.on("keydown" + that.ns, function(e) {
-      var isDropdownHidden = that.countryList.hasClass('hide');
+      if(this.options.countryMode === 'full') {
+        // open dropdown list if currently focused
+        this.flagsContainer.on("keydown" + that.ns, function(e) {
+          var isDropdownHidden = that.countryList.hasClass('hide');
 
-      if (isDropdownHidden &&
-        (e.which == keys.UP || e.which == keys.DOWN ||
-          e.which == keys.SPACE || e.which == keys.ENTER)
-      ) {
-        // prevent form from being submitted if "ENTER" was pressed
-        e.preventDefault();
+          if (isDropdownHidden &&
+            (e.which == keys.UP || e.which == keys.DOWN ||
+              e.which == keys.SPACE || e.which == keys.ENTER)
+          ) {
+            // prevent form from being submitted if "ENTER" was pressed
+            e.preventDefault();
 
-        // prevent event from being handled again by document
-        e.stopPropagation();
+            // prevent event from being handled again by document
+            e.stopPropagation();
 
-        that._showDropdown();
+            that._showDropdown();
+          }
+
+          // allow navigation from dropdown to input on TAB
+          if (e.which == keys.TAB) {
+            that._closeDropdown();
+          }
+        });
       }
-
-      // allow navigation from dropdown to input on TAB
-      if (e.which == keys.TAB) {
-        that._closeDropdown();
-      }
-    });
   },
 
 
@@ -907,6 +917,10 @@ Plugin.prototype = {
 
   // check if need to select a new flag based on the given number
   _updateFlagFromNumber: function(number, updateDefault) {
+    //if in 'single' or 'none' mode, no need to update flag from the number
+    if(this.options.countryMode !== 'full') {
+      return;
+    }
     // if we're in nationalMode and we're on US/Canada, make sure the number starts with a +1 so _getDialCode will be able to extract the area code
     // update: if we dont yet have selectedCountryData, but we're here (trying to update the flag from the number), that means we're initialising the plugin with a number that already has a dial code, so fine to ignore this bit
     if (number && this.options.nationalMode && this.selectedCountryData && this.selectedCountryData.dialCode == "1" && number.charAt(0) != "+") {
