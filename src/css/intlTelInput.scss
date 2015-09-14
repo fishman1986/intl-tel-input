@@ -34,6 +34,7 @@ $arrowColor: #555 !default;
 
 $inputPadding: 6px !default;
 $selectedFlagWidth: $flagWidth + $flagPadding + $arrowWidth + (2 * $arrowPadding) !default;
+$selectedSingleFlagWidth: $flagWidth + $flagPadding + (2 * $arrowPadding) !default;
 
 // image related variables
 $flagsImagePath: "../img/" !default;
@@ -110,6 +111,18 @@ $flagsImageExtension: "png" !default;
     .selected-flag {
       background-color: $hoverColor;
     }
+  }
+  &.single .flag-dropdown:hover{
+    cursor: default;
+    .selected-flag {
+      background-color: transparent;
+    }
+  }
+  &.single input, &.single input[type=text], &.single input[type=tel]{
+    padding-left: $selectedSingleFlagWidth + $inputPadding;
+  }
+  &.none input, &.none input[type=text], &.none input[type=tel]{
+    padding-left: 0px;
   }
   // disable hover state when input is disabled
   input[disabled] + .flag-dropdown:hover, input[readonly] + .flag-dropdown:hover {
