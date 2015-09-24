@@ -89,7 +89,7 @@ If there is just a dial code in the input: remove it on blur, and re-add it on f
 Type: `Boolean` Default: `true`  
 Add or remove input placeholder with an example number for the selected country. Requires the `utilsScript` option.
 
-**countryCode**  
+**countryMode**  
 Type: `String` Default: `full`  
 Change plugin display mode, could be "full" (normal), "single" (no dropdown/arrow), or "none" (no selected country or dropdown - just a normal input).
 
