@@ -11,7 +11,7 @@ describe("vanilla:", function() {
   describe("init plugin on input with prepopulated value", function() {
 
     beforeEach(function() {
-      input = $("<input value='+44 12345'>");
+      input = $("<input value='+44 72345'>");
       input.intlTelInput();
     });
 
@@ -121,7 +121,7 @@ describe("vanilla:", function() {
     describe("typing a number with a different dial code", function() {
 
       beforeEach(function() {
-        input.val("+44 1234567");
+        input.val("+44 7234567");
         triggerKeyOnInput(" ");
       });
 

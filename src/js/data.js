@@ -80,6 +80,12 @@ var allCountries = [
     "1264"
   ],
   [
+    "Antartica",
+    "aq",
+    "672",
+    1
+  ],
+  [
     "Antigua and Barbuda",
     "ag",
     "1268"
@@ -256,6 +262,11 @@ var allCountries = [
     "Chad (Tchad)",
     "td",
     "235"
+  ],
+  [
+    "Channel Islands",
+    "cs",
+    "441"
   ],
   [
     "Chile",
@@ -799,6 +810,12 @@ var allCountries = [
     "31"
   ],
   [
+    "Netherlands Antilles",
+    "an",
+    "599",
+    2
+  ],
+  [
     "New Caledonia (Nouvelle-Calédonie)",
     "nc",
     "687"
@@ -831,7 +848,8 @@ var allCountries = [
   [
     "Norfolk Island",
     "nf",
-    "672"
+    "672",
+    0
   ],
   [
     "North Korea (조선 민주주의 인민 공화국)",
@@ -1231,6 +1249,13 @@ var allCountries = [
     "Vietnam (Việt Nam)",
     "vn",
     "84"
+  ],
+  [
+    "Wake Island",
+    "um",
+    "1",
+    4,
+    ["808"]
   ],
   [
     "Wallis and Futuna",
