@@ -208,11 +208,15 @@ Plugin.prototype = {
       }).insertBefore(this.telInput);
 
       // currently selected flag (displayed to left of input)
-      var selectedFlag = $("<div>", {
+      var flagAttributes = {
         // make element focusable and tab navigable
         "tabindex": "0",
         "class": "selected-flag"
-      }).appendTo(this.flagsContainer);
+      }, selectedFlag;
+      if(this.options.countryMode === 'single') {
+        delete flagAttributes.tabindex;
+      }
+      selectedFlag = $("<div>", flagAttributes).appendTo(this.flagsContainer);
       this.selectedFlagInner = $("<div>", {
         "class": "iti-flag"
       }).appendTo(selectedFlag);
