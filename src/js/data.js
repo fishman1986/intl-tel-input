@@ -266,7 +266,8 @@ var allCountries = [
   [
     "Channel Islands",
     "cs",
-    "441"
+    "44",
+    4
   ],
   [
     "Chile",
