@@ -1,7 +1,7 @@
-# International Telephone Input [![Build Status](https://travis-ci.org/Bluefieldscom/intl-tel-input.svg)](https://travis-ci.org/Bluefieldscom/intl-tel-input)
-A jQuery plugin for entering and validating international telephone numbers. It adds a flag dropdown to any input, which lists all the countries and their international dial codes next to their flags.
+# International Telephone Input [![Build Status](https://travis-ci.org/jackocnr/intl-tel-input.svg)](https://travis-ci.org/jackocnr/intl-tel-input)
+A jQuery plugin for entering and validating international telephone numbers. It adds a flag dropdown to any input, automatically detects the user's country, displays a relevant placeholder and auto formats the number as they type.
 
-<img src="https://raw.github.com/Bluefieldscom/intl-tel-input/master/screenshot.png" width="424px" height="246px">
+<img src="https://raw.github.com/jackocnr/intl-tel-input/master/screenshot.png" width="424px" height="246px">
 
 If you like it, please upvote on [Product Hunt](http://www.producthunt.com/posts/intl-tel-input)!
 
@@ -25,25 +25,27 @@ You can view a live demo and some examples of how to use the various options her
 
 
 ## Features
+* Automatically select the user's current country using an IP lookup
 * Automatically format the number as the user types
 * Automatically set the input placeholder to an example number for the selected country
 * Navigate the country dropdown by typing a country's name, or using up/down keys
-* Selecting a country from the dropdown will update the dial code in the input
-* Typing a different dial code will automatically update the displayed flag
-* Dropdown appears above or below the input depending on available space/scroll position
+* Handle phone number extensions
+* The user types their national number and the plugin gives you the full standardized international number
+* Full validation, including specific error types
+* Retina flag icons
 * Lots of initialisation options for customisation, as well as public methods for interaction
 
 
 ## Browser Compatibility
-|            | Chrome | FF  | Safari | IE  | Chrome Android | Android WebView | Mobile Safari | IE Mob |
-| :--------- | :----: | :-: | :----: | :-: | :------------: | :-------------: | :-----------: | :----: |
-| Core       |    ✓   |  ✓  |    ✓   |  8  |      ✓         |      ✓          |       ✓       |     ✓  |
-| autoFormat |    ✓   |  ✓  |    ✓   |  8  |      ✓         |      [✗](https://github.com/Bluefieldscom/intl-tel-input/issues/187)          |       ✓       |     [✗](https://github.com/Bluefieldscom/intl-tel-input/issues/68)  |
+|            | Chrome | FF  | Safari | IE  | Chrome Android | Mobile Safari | IE Mob |
+| :--------- | :----: | :-: | :----: | :-: | :------------: | :-----------: | :----: |
+| Core       |    ✓   |  ✓  |    ✓   |  8  |      ✓         |       ✓       |     ✓  |
+| autoFormat |    ✓   |  ✓  |    ✓   |  8  |      ✓         |       ✓       |     [✗](https://github.com/jackocnr/intl-tel-input/issues/68)  |
 
 
 
 ## Getting Started
-1. Download the [latest version](https://github.com/Bluefieldscom/intl-tel-input/archive/master.zip), or better yet install it with [npm](https://www.npmjs.com/) or [Bower](http://bower.io)
+1. Download the [latest version](https://github.com/jackocnr/intl-tel-input/archive/master.zip), or better yet install it with [npm](https://www.npmjs.com/) or [Bower](http://bower.io)
 
 2. Link the stylesheet
   ```html
@@ -54,7 +56,7 @@ You can view a live demo and some examples of how to use the various options her
   ```css
   .iti-flag {background-image: url("path/to/flags.png");}
   ```
-  _Update: you will now also need to override the path to flags@2x.png (for retina devices). The best way to do this is to copy the media query at the end of [intlTelInput.scss](https://github.com/Bluefieldscom/intl-tel-input/blob/master/src/css/intlTelInput.scss) and update the path._
+  _Update: you will now also need to override the path to flags@2x.png (for retina devices). The best way to do this is to copy the media query at the end of [intlTelInput.scss](https://github.com/jackocnr/intl-tel-input/blob/master/src/css/intlTelInput.scss) and update the path._
 
 4. Add the plugin script and initialise it on your input element
   ```html
@@ -78,7 +80,8 @@ Type: `Boolean` Default: `false`
 When `autoFormat` is enabled, this option will support formatting extension numbers e.g. "+1 (702) 123-1234 ext. 12345".
 
 **autoFormat**  
-Type: `Boolean` Default: `true`  
+Type: `Boolean` Default: `false`  
+_Note this option is currently not recommended, due to a [known UX issue](https://github.com/jackocnr/intl-tel-input/issues/322)._  
 Format the number on each keypress according to the country-specific formatting rules. This will also prevent the user from entering invalid characters (triggering a red flash in the input - see [Troubleshooting](#troubleshooting) to customise this). Requires the `utilsScript` option.
 
 **autoHideDialCode**  
@@ -95,26 +98,40 @@ Change the placeholder generated by autoPlaceholder. Must return a string.
 
 ```js
 customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
-  return 'e.g. ' + selectedCountryPlaceholder;
+  return "e.g. " + selectedCountryPlaceholder;
 }
 ```
 
-**defaultCountry**  
+**dropdownContainer**  
 Type: `String` Default: `""`  
-Set the default country by it's country code. You can also set it to `"auto"`, which will lookup the user's country based on their IP address - requires the `geoIpLookup` option - [see example](http://jackocnr.com/lib/intl-tel-input/examples/gen/default-country-ip.html). When instantiating the plugin, we now return a [deferred object](https://api.jquery.com/category/deferred-object/), so you can use `.done(callback)` to know when it is finished. If you leave `defaultCountry` blank, it will default to the first country in the list. _Note that if you choose to do the auto lookup, and you also happen to use the [jquery-cookie](https://github.com/carhartl/jquery-cookie) plugin, it will store the loaded country code in a cookie for future use._
+Specify the container for the country dropdown (use a jQuery selector e.g. `"body"`). This is useful when the input is within a scrolling element, or an element with `overflow: hidden`. Wherever you put the dropdown it will automatically close on the `window` scroll event to prevent positioning issues. If you want it to close when a different element is scrolled (such as the input's parent), simply listen for the that scroll event, and trigger `$(window).scroll()` e.g.
+
+```js
+$("#scrollingElement").scroll(function() {
+  $(window).scroll();
+});
+```
+
+**excludeCountries**  
+Type: `Array` Default: `undefined`  
+Don't display the countries you specify.
 
 **geoIpLookup**  
 Type: `Function` Default: `null`  
-When setting `defaultCountry` to `"auto"`, we need to use a special service to lookup the location data for the user. Write a custom method to get the country code. For example if you use [ipinfo.io](http://ipinfo.io/):  
+When setting `initialCountry` to `"auto"`, we need to use a special service to lookup the location data for the user. Write a custom method to get the country code. For example if you use [ipinfo.io](http://ipinfo.io/):  
 ```js
 geoIpLookup: function(callback) {
-  $.get('http://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+  $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
     var countryCode = (resp && resp.country) ? resp.country : "";
     callback(countryCode);
   });
 }
 ```
 _Note that the callback must still be called in the event of an error, hence the use of `always` in this example._
+
+**initialCountry**  
+Type: `String` Default: `""`  
+Set the default country by it's country code. You can also set it to `"auto"`, which will lookup the user's country based on their IP address - requires the `geoIpLookup` option - [see example](http://jackocnr.com/lib/intl-tel-input/examples/gen/default-country-ip.html). When instantiating the plugin, we now return a [deferred object](https://api.jquery.com/category/deferred-object/), so you can use `.done(callback)` to know when it is finished. If you leave `initialCountry` blank, it will default to the first country in the list. _Note that if you choose to do the auto lookup, and you also happen to use the [js-cookie](https://github.com/js-cookie/js-cookie) plugin, it will store the loaded country code in a cookie for future use._
 
 **nationalMode**  
 Type: `Boolean` Default: `true`  
@@ -134,7 +151,7 @@ Specify the countries to appear at the top of the list.
 
 **utilsScript**  
 Type: `String` Default: `""` Example: `"lib/libphonenumber/build/utils.js"`  
-Enable formatting/validation etc. by specifying the path to the included utils.js script, which is fetched only when the page has finished loading (on window.load) to prevent blocking. See [Utilities Script](#utilities-script) for more information. _Note that if you're lazy loading the plugin script itself (intlTelInput.js) this will not work and you will need to use the `loadUtils` method instead._
+Enable formatting/validation etc. by specifying the path to the included utils.js script (also available from [cdnjs.com](https://cdnjs.com/libraries/intl-tel-input)), which is fetched only when the page has finished loading (on window.load) to prevent blocking. See [Utilities Script](#utilities-script) for more information. _Note that if you're lazy loading the plugin script itself (intlTelInput.js) this will not work and you will need to use the `loadUtils` method instead._
 
 
 ## Public Methods
@@ -192,7 +209,7 @@ Get more information about a validation error. Requires the `utilsScript` option
 ```js
 var error = $("#mobile-number").intlTelInput("getValidationError");
 ```
-Returns an integer, which you can match against the [various options](https://github.com/Bluefieldscom/intl-tel-input/blob/master/lib/libphonenumber/src/utils.js#L175) in the global enum `intlTelInputUtils.validationError` e.g.  
+Returns an integer, which you can match against the [various options](https://github.com/jackocnr/intl-tel-input/blob/master/lib/libphonenumber/src/utils.js#L175) in the global enum `intlTelInputUtils.validationError` e.g.  
 ```js
 if (error == intlTelInputUtils.validationError.TOO_SHORT) {
     // the number is too short
@@ -206,17 +223,10 @@ var isValid = $("#mobile-number").intlTelInput("isValidNumber");
 ```
 Returns: `true`/`false`
 
-**loadUtils**  
-_Note: this is only needed if you're lazy loading the plugin script itself (intlTelInput.js). If not then just use the `utilsScript` option._  
-Load the utils.js script (included in the lib directory) to enable formatting/validation etc. See [Utilities Script](#utilities-script) for more information.
-```js
-$("#mobile-number").intlTelInput("loadUtils", "lib/libphonenumber/build/utils.js");
-```
-
-**selectCountry**  
+**setCountry**  
 Change the country selection (e.g. when the user is entering their address).  
 ```js
-$("#mobile-number").intlTelInput("selectCountry", "gb");
+$("#mobile-number").intlTelInput("setCountry", "gb");
 ```
 
 **setNumber**  
@@ -239,6 +249,13 @@ Returns an array of country objects:
   iso2: "af",
   dialCode: "93"
 }, ...]
+```
+
+**loadUtils**  
+_Note: this is only needed if you're lazy loading the plugin script itself (intlTelInput.js). If not then just use the `utilsScript` option._  
+Load the utils.js script (included in the lib directory) to enable formatting/validation etc. See [Utilities Script](#utilities-script) for more information.
+```js
+$.fn.intlTelInput.loadUtils("lib/libphonenumber/build/utils.js");
 ```
 
 
@@ -299,7 +316,7 @@ _Note: there is currently [a bug](https://bugs.webkit.org/show_bug.cgi?id=141822
 ## Contributing
 I'm very open to contributions, big and small! For instructions on contributing to a project on Github, see this guide: [Fork A Repo](https://help.github.com/articles/fork-a-repo).
 
-You will need to install [Grunt](http://gruntjs.com) to build the project, which relies on [npm](https://www.npmjs.org). You will also need [evenizer](https://github.com/katapad/evenizer) (`npm install -g evenizer`) and [imagemagick](http://www.imagemagick.org/) to generate retina flag sprites. Currently we pull in the flag icons in a submodule (until [this issue](https://github.com/behdad/region-flags/issues/3) is resolved), so you need to cd into region-flags/ and run `git submodule init` and then `git submodule update`. Then back in the project directory, run `npm install` to install Grunt etc, then `grunt bower` to install other dependencies, then you should be good to run `grunt build` to build the project. At this point, the included demo.html should be working. You should make your changes in the `src` directory and be sure to run `grunt build` again before committing.
+You will need to install [Grunt](http://gruntjs.com) to build the project, which relies on [npm](https://www.npmjs.org). You will also need [evenizer](https://github.com/katapad/evenizer) (`npm install -g evenizer`) and [imagemagick](http://www.imagemagick.org/) to generate retina flag sprites. Then run `npm install` to install Grunt etc, then `grunt bower` to install other dependencies, then you should be good to run `grunt build` to build the project. At this point, the included demo.html should be working. You should make your changes in the `src` directory and be sure to run `grunt build` again before committing.
 
 If when building, you get an error in the "exec:evenizer" task, you may need to temporarily increase the ulimit by running this command: `ulimit -S -n 2048`
 
@@ -309,5 +326,10 @@ If when building, you get an error in the "exec:evenizer" task, you may need to 
 * Original country data from mledoze's [World countries in JSON, CSV and XML](https://github.com/mledoze/countries)
 * Formatting/validation/example number code from [libphonenumber](http://libphonenumber.googlecode.com)
 * Lookup user's country using [ipinfo.io](http://ipinfo.io)
-* Feature contributions are listed in the wiki: [Contributions](https://github.com/Bluefieldscom/intl-tel-input/wiki/Contributions)
-* List of [sites using intl-tel-input](https://github.com/Bluefieldscom/intl-tel-input/wiki/Sites-using-intl-tel-input)
+* Feature contributions are listed in the wiki: [Contributions](https://github.com/jackocnr/intl-tel-input/wiki/Contributions)
+
+
+## Links
+* List of [sites using intl-tel-input](https://github.com/jackocnr/intl-tel-input/wiki/Sites-using-intl-tel-input)
+* List of [integrations with intl-tel-input](https://github.com/jackocnr/intl-tel-input/wiki/Integrations)
+* Android native port: [IntlPhoneInput](https://github.com/Rimoto/IntlPhoneInput)

@@ -14,16 +14,16 @@ $.each(countryData, function(i, country) {
 });
 
 // listen to the telephone input for changes
-telInput.change(function() {
+telInput.on("country-change", function() {
   var countryCode = telInput.intlTelInput("getSelectedCountryData").iso2;
   addressDropdown.val(countryCode);
 });
 
 // trigger a fake "change" event now, to trigger an initial sync
-telInput.change();
+telInput.trigger("country-change");
 
 // listen to the address dropdown for changes
 addressDropdown.change(function() {
   var countryCode = $(this).val();
-  telInput.intlTelInput("selectCountry", countryCode);
+  telInput.intlTelInput("setCountry", countryCode);
 });

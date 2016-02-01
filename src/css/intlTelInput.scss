@@ -40,6 +40,9 @@ $flagsImagePath: "../img/" !default;
 $flagsImageName: "flags" !default;
 $flagsImageExtension: "png" !default;
 
+// enough space for them to click off to close
+$mobilePopupMargin: 30px;
+
 .intl-tel-input {
   // need position on the container so the selected flag can be
   // absolutely positioned over the input
@@ -91,11 +94,11 @@ $flagsImageExtension: "png" !default;
   // when user presses invalid key, add this class temporarily to change bg color
   input.iti-invalid-key {
     // override the default transition state to show the change instantly
-    transition: background-color 0;
+    transition: background-color 0s;
     background-color: #FFC7C7;
   }
 
-  .flag-dropdown {
+  .flag-container {
     // positioned over the top of the input
     position: absolute;
     // full height
@@ -105,14 +108,14 @@ $flagsImageExtension: "png" !default;
     padding: $borderWidth;
   }
   // hover state - show flag is clickable
-  .flag-dropdown:hover {
+  .flag-container:hover {
     cursor: pointer;
     .selected-flag {
       background-color: $hoverColor;
     }
   }
   // disable hover state when input is disabled
-  input[disabled] + .flag-dropdown:hover, input[readonly] + .flag-dropdown:hover {
+  input[disabled] + .flag-container:hover, input[readonly] + .flag-container:hover {
     cursor: default;
     .selected-flag {
       background-color: transparent;
@@ -137,7 +140,7 @@ $flagsImageExtension: "png" !default;
       margin: auto;
     }
 
-    .arrow {
+    .iti-arrow {
       position: absolute;
       // split the difference between the flag and the arrow height to verically center
       top: 50%;
@@ -166,8 +169,14 @@ $flagsImageExtension: "png" !default;
     // popup so render above everything else
     z-index: 2;
 
-    // inline flags
-    .flag {
+    // place menu above the input element
+    &.dropup {
+      bottom: 100%;
+      margin-bottom: (-$borderWidth);
+    }
+
+    // dropdown flags need consistent width, so wrap in a container
+    .flag-box {
       display: inline-block;
       width: $flagWidth;
     }
@@ -197,7 +206,7 @@ $flagsImageExtension: "png" !default;
       border-bottom: $borderWidth solid $greyBorder;
     }
 
-    // each country item in dropdown
+    // each country item in dropdown (we must have separate class to differentiate from dividers)
     .country {
       // Note: decided not to use line-height here for alignment because it causes issues e.g. large font-sizes will overlap, and also looks bad if one country overflows onto 2 lines
       padding: 5px 10px;
@@ -211,23 +220,45 @@ $flagsImageExtension: "png" !default;
     }
 
     // spacing between country flag, name and dial code
-    .flag, .country-name, .dial-code {
+    .flag-box, .country-name, .dial-code {
       vertical-align: middle;
     }
-    .flag, .country-name {
+    .flag-box, .country-name {
       margin-right: 6px;
     }
   }
 
-  // on mobiles we use a select for the country dropdown
-  select {
+  // if dropdownContainer option is set, increase z-index to prevent display issues
+  &.iti-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: $selectedFlagWidth;
-    height: 100%;
-    opacity: 0;
+    top: -1000px;
+    left: -1000px;
+    // higher than default Bootstrap modal z-index of 1050
+    z-index: 1060;
+    // to keep styling consistent with .flag-container
+    padding: $borderWidth;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+// overrides for mobile popup
+.iti-mobile .intl-tel-input {
+  &.iti-container {
+    top: $mobilePopupMargin;
+    bottom: $mobilePopupMargin;
+    left: $mobilePopupMargin;
+    right: $mobilePopupMargin;
+  }
+  .country-list {
+    max-height: 100%;
+    width: 100%;
+    .country {
+      padding: 10px 10px;
+      // increase line height because dropdown copy is v likely to overflow on mobile and when it does it needs to be well spaced
+      line-height: 1.5em;
+    }
   }
 }
 
