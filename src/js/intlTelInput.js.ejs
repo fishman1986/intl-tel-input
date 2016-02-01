@@ -264,10 +264,15 @@ Plugin.prototype = {
   _appendListItems: function(countries, className) {
     // we create so many DOM elements, it is faster to build a temp string
     // and then add everything to the DOM in one go at the end
-    var tmp = "";
+    var tmp = "",
+       removePreferred = className == '' && this.options.preferredCountries ? ',' + this.options.preferredCountries.join(',') + ',' : '';
     // for each country
     for (var i = 0; i < countries.length; i++) {
       var c = countries[i];
+
+      if (removePreferred.indexOf("," + c.iso2 + ",") >= 0) {
+          continue;
+      }
       if (this.isMobile) {
         tmp += "<option data-dial-code='" + c.dialCode + "' value='" + c.iso2 + "'>";
         tmp += c.name + " +" + c.dialCode;
@@ -1265,7 +1270,7 @@ Plugin.prototype = {
   // validate the input val - assumes the global function isValidNumberForRegion (from utilsScript)
   isValidNumberForRegion: function() {
     var val = $.trim(this.telInput.val()),
-      countryCode = (this.options.nationalMode) ? this.selectedCountryData.iso2 : "";
+      countryCode = this.selectedCountryData.iso2;
     if (window.intlTelInputUtils) {
       return intlTelInputUtils.isValidNumberForRegion(val, countryCode);
     }
