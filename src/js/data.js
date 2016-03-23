@@ -1253,7 +1253,7 @@ var allCountries = [
   ],
   [
     "Wake Island",
-    "um",
+    "us",
     "1",
     4,
     ["808"]
